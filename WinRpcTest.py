@@ -34,7 +34,7 @@ def banner():
 def GetDNSlog():
     base_res = requests.post("https://dig.pm/new_gen",data="domain=dns.1433.eu.org.",timeout=5).text
     base_domain, res_token = json.loads(base_res)['domain'], json.loads(base_res)['token']
-    print("GetDNSlogInfo:", base_domain, res_token)
+    print("GetDNSlogInfo:", base_domain, res_token, '\n')
     return base_domain, res_token
 
 
@@ -50,8 +50,7 @@ def GetDNSlogRes(base_domain,res_token):
 
         if res_json:
             ips = []
-            print("\n==============================================\n "
-                  "successful ips: ")
+            print("\nsuccessful ips: \n")
             for i in res_json:
                 ip_temp = str(res_json[i]['subdomain']).split(".")
                 del ip_temp[-6:]
@@ -59,11 +58,11 @@ def GetDNSlogRes(base_domain,res_token):
                 if ip not in ips:
                     ips.append(ip)
             [print(x) for x in ips]
+            print()
         else:
             print("\nIps all False!\n")
     except:
         pass
-
 
 
 
@@ -103,15 +102,17 @@ def Dce_ip(ip, username, password):
         # pass
         # print(str(err))
         if "LOGON_FAILURE" in str(err):
-            print(ip, " -> ", "LOGON_FAILURE!")
+            print(str(ip).ljust(15), " -> ", "LOGON_FAILURE!")
         elif "OBJECT_NAME_NOT_FOUND" in str(err):
-            print(ip, " -> ", "OBJECT_NAME_NOT_FOUND!")
+            print(str(ip).ljust(15), " -> ", "OBJECT_NAME_NOT_FOUND!")
         elif "timed out" in str(err):
-            print(ip, " -> ", "Connect Host Time Out!")
+            print(str(ip).ljust(15), " -> ", "Connect Host Time Out!")
+        elif "getaddrinfo failed" in str(err):
+            print(str(ip).ljust(15), " -> ", "Maybe Ipaddr Wrong")
         elif "0x709" in str(err):
-            print(ip, " -> ", "Send Done!")
+            print(str(ip).ljust(15), " -> ", "Send Done!")
         else:
-            print(ip, " -> ", "Maybe False!")
+            print(str(ip).ljust(15), " -> ", "Maybe False!")
 
 if __name__ == '__main__':
     base_domain, res_token = "", ""
@@ -120,6 +121,8 @@ if __name__ == '__main__':
     parser.add_argument('--file', '-f', type=str, help='TargetIpsFile')
     parser.add_argument('--username', '-u', required=True, type=str, help='UserName')
     parser.add_argument('--password', '-p', required=True, type=str,help='PassWord')
+    parser.add_argument('--output', '-o', type=str, help='output')
+    # todo: 将结果保存到文件。
     # parser.add_argument('--detail', '-v', default="1", type=str, help='detail output')
     # todo： 增加 nthash 和 lmhash 认证方式。
     args = parser.parse_args()
@@ -139,7 +142,7 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("Missing Parameters！\neg: python WinRPCtest.py -h 192.168.101.10 -u administrator -p admin123\n \
-         python WinRPCtest.py -t ips.txt -u administrator -p admin123")
+        print("Missing Parameters！\neg: python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
+         python WinRPCtest.py -f ips.txt -u administrator -p admin123")
 
     # Dce_ip("192.168.119.135", "administrator", "admin123")

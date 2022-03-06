@@ -19,7 +19,7 @@ python WinRPCtest.py -f ips.txt -u administrator -p admin123
 
 
 
-![image-20220306132419496](media/README/image-20220306132419496.png)
+![image-20220306152611422](media/README/image-20220306152611422.png)
 
 ### ToDo
 
