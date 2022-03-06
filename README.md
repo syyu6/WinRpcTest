@@ -2,15 +2,21 @@
 
 利用RPC服务，批量探测Windows出网机器
 
+### 前言
 
+实战中经常碰到内网Windows机器不出网的情况，一台一台登录测出网非常麻烦，学习倾旋师傅的思路，利用Windows RPC协议进行探测，并且提到用python的impacket模块可以方便调用RPC。于是便有了此工具进行批量化探测。
 
-Usage：
+### 功能
+
+1.   批量导入IP地址，前提是有账号密码。
+2.   校验失败的IP，如IP格式错误、连接超时、认证失败等情况。
+3.   通过dnslog验证，获得出网ip，格式如192.168.100.101.??????.dnslog.cn，进行格式化处理并去重。
+
+### Usage
 
 ```
 WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
 ```
-
-
 
 单个ip
 
