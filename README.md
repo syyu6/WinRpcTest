@@ -10,7 +10,7 @@ Usage：
 WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
 ```
 
-eg：
+
 
 单个ip
 
