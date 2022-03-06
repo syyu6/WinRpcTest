@@ -12,20 +12,25 @@ WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
 
 eg：
 
+单个ip
+
 ```
 python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123
-python WinRPCtest.py -f ips.txt -u administrator -p admin123
 ```
 
+文件批量导入
 
+```
+python WinRPCtest.py -f ips.txt -u administrator -p admin123
+```
 
 ![image-20220306152611422](media/README/image-20220306152611422.png)
 
 ### ToDo
 
 ```
-增加 nthash 和 lmhash 认证方式
-添加-o参数，将输出结果保存到文件
+1.增加 nthash 和 lmhash 认证方式
+2.添加-o参数，将输出结果保存到文件
 ```
 
 
