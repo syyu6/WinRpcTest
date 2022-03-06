@@ -7,7 +7,7 @@
 Usage：
 
 ```
-WinRpcTest.py [-h] [--target TARGET] [--file FILE] -u USERNAME -p PASSWORD
+WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
 ```
 
 eg：
