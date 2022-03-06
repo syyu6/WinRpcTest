@@ -25,6 +25,7 @@ python WinRPCtest.py -f ips.txt -u administrator -p admin123
 
 ```
 增加 nthash 和 lmhash 认证方式
+添加-o参数，将输出结果保存到文件
 ```
 
 
