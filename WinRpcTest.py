@@ -50,7 +50,8 @@ def GetDNSlogRes(base_domain,res_token):
 
         if res_json:
             ips = []
-            print("\nsuccessful ips: ")
+            print("\n==============================================\n "
+                  "successful ips: ")
             for i in res_json:
                 ip_temp = str(res_json[i]['subdomain']).split(".")
                 del ip_temp[-6:]
@@ -79,7 +80,7 @@ def Dce_ip(ip, username, password):
     rpctransport = transport.DCERPCTransportFactory(ncacn_np)
     username = username
     password = password
-    print(ip, "...",end=" | ")
+    # print(ip, "...",end=" | ")
     try:
         rpctransport.set_credentials(username, password, domain, lmhash, nthash)
         rpctransport.set_connect_timeout(timeout=3)
@@ -102,15 +103,15 @@ def Dce_ip(ip, username, password):
         # pass
         # print(str(err))
         if "LOGON_FAILURE" in str(err):
-            print("LOGON_FAILURE!")
+            print(ip, " -> ", "LOGON_FAILURE!")
         elif "OBJECT_NAME_NOT_FOUND" in str(err):
-            print("OBJECT_NAME_NOT_FOUND!")
+            print(ip, " -> ", "OBJECT_NAME_NOT_FOUND!")
         elif "timed out" in str(err):
-            print("Connect Host Time Out!")
+            print(ip, " -> ", "Connect Host Time Out!")
         elif "0x709" in str(err):
-            print("Maybe successful!")
+            print(ip, " -> ", "Send Done!")
         else:
-            print("False!")
+            print(ip, " -> ", "Maybe False!")
 
 if __name__ == '__main__':
     base_domain, res_token = "", ""
@@ -119,6 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('--file', '-f', type=str, help='TargetIpsFile')
     parser.add_argument('--username', '-u', required=True, type=str, help='UserName')
     parser.add_argument('--password', '-p', required=True, type=str,help='PassWord')
+    # parser.add_argument('--detail', '-v', default="1", type=str, help='detail output')
     # todo： 增加 nthash 和 lmhash 认证方式。
     args = parser.parse_args()
 
@@ -137,7 +139,7 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("Missing Parameters！\neg: python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
-         python WinRPCtest.py -f ips.txt -u administrator -p admin123")
+        print("Missing Parameters！\neg: python WinRPCtest.py -h 192.168.101.10 -u administrator -p admin123\n \
+         python WinRPCtest.py -t ips.txt -u administrator -p admin123")
 
     # Dce_ip("192.168.119.135", "administrator", "admin123")
