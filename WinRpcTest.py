@@ -137,7 +137,7 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("Missing Parameters！\neg: python WinRPCtest.py -h 192.168.101.10 -u administrator -p admin123\n \
-         python WinRPCtest.py -t ips.txt -u administrator -p admin123")
+        print("Missing Parameters！\neg: python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
+         python WinRPCtest.py -f ips.txt -u administrator -p admin123")
 
     # Dce_ip("192.168.119.135", "administrator", "admin123")

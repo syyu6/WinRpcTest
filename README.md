@@ -13,8 +13,8 @@ WinRpcTest.py [-h] [--target TARGET] [--file FILE] -u USERNAME -p PASSWORD
 eg：
 
 ```
-python WinRPCtest.py -h 192.168.101.10 -u administrator -p admin123
-python WinRPCtest.py -t ips.txt -u administrator -p admin123
+python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123
+python WinRPCtest.py -f ips.txt -u administrator -p admin123
 ```
 
 
