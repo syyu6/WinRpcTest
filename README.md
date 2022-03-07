@@ -18,7 +18,7 @@
 WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
 ```
 
-单个ip
+单个IP
 
 ```
 python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123
@@ -32,11 +32,25 @@ python WinRPCtest.py -f ips.txt -u administrator -p admin123
 
 ![image-20220306152611422](media/README/image-20220306152611422.png)
 
+
+
+
+
+-    --hashes/-H argument in order to PTH.
+-    --domain/-d argument to specify the domain.
+
+```
+python3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1
+```
+
+![image](media/README/156996536-8d1764a3-d63d-4980-916b-bdb8c7a2bb0f.png)
+
+
+
 ### ToDo
 
 ```
-1.增加 nthash 和 lmhash 认证方式
-2.添加-o参数，将输出结果保存到文件
+添加-o参数，将输出结果保存到文件
 ```
 
 

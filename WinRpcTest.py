@@ -15,8 +15,6 @@ import requests
 import json
 
 
-
-
 TS = ('8a885d04-1ceb-11c9-9fe8-08002b104860', '2.0')
 IFACE_UUID = rprn.MSRPC_UUID_RPRN
 
@@ -106,7 +104,7 @@ def Dce_ip(ip, domain ,username, password, hashes):
         elif "timed out" in str(err):
             print("[-] " + str(ip).ljust(15), "-> ", "Connection timeout!")
         elif "getaddrinfo failed" in str(err):
-            print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP address.")
+            print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP address!")
         elif "0x709" in str(err):
             print("[+] " + str(ip).ljust(15), "-> ", "Internet accessible !!!")
         else:
@@ -141,5 +139,6 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("Missing Parameters！\neg: python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
-         python WinRPCtest.py -f ips.txt -u administrator -p admin123")
+        print("Missing Parameters！\neg: python3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
+         python3 WinRPCtest.py -f ips.txt -u administrator -p admin123\n \
+         python3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
