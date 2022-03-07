@@ -22,11 +22,6 @@ IFACE_UUID = rprn.MSRPC_UUID_RPRN
 
 username = ''
 password = ''
-domain = ''
-lmhash = ''
-nthash = ''
-
-
 
 def banner():
     pass
@@ -34,7 +29,7 @@ def banner():
 def GetDNSlog():
     base_res = requests.post("https://dig.pm/new_gen",data="domain=dns.1433.eu.org.",timeout=5).text
     base_domain, res_token = json.loads(base_res)['domain'], json.loads(base_res)['token']
-    print("GetDNSlogInfo:", base_domain, res_token, '\n')
+    print("[+] GetDNSlogInfo:", base_domain, res_token, '\n')
     return base_domain, res_token
 
 
@@ -45,7 +40,6 @@ def GetDNSlogRes(base_domain,res_token):
     }
     try:
         res = requests.post("https://dig.pm/get_results", data=datas,timeout=5)
-        # print(res.text)
         res_json = json.loads(res.text)
 
         if res_json:
@@ -65,21 +59,29 @@ def GetDNSlogRes(base_domain,res_token):
         pass
 
 
-
-def Dce_IpsFile(filename, username, password):
+def Dce_IpsFile(filename, domain, username, password, hashes):
     ips = open(filename,"r").readlines()
     for ip in ips:
         ip = ip.strip()
-        Dce_ip(ip, username, password)
+        Dce_ip(ip, domain, username, password, hashes)
 
-def Dce_ip(ip, username, password):
+def Dce_ip(ip, domain ,username, password, hashes):
     global base_domain,res_cookie
+
+    if domain is None:
+        domain = ''
+
+    if hashes is not None:
+        lmhash, nthash = hashes.split(':')
+    else:
+        lmhash = ''
+        nthash = ''
+
     ncacn_np = rf'ncacn_np:{ip}[\pipe\spoolss]'
-    # print(ncacn_np)
     rpctransport = transport.DCERPCTransportFactory(ncacn_np)
     username = username
     password = password
-    # print(ip, "...",end=" | ")
+
     try:
         rpctransport.set_credentials(username, password, domain, lmhash, nthash)
         rpctransport.set_connect_timeout(timeout=3)
@@ -93,38 +95,35 @@ def Dce_ip(ip, username, password):
             request['pDatatype'] = NULL
             request['pDevModeContainer']['pDevMode'] = NULL
             request['AccessRequired'] = rprn.SERVER_READ
-
             dce.request(request)
-
             rpctransport.disconnect()
 
     except Exception as err:
-        # pass
-        # print(str(err))
         if "LOGON_FAILURE" in str(err):
-            print(str(ip).ljust(15), " -> ", "LOGON_FAILURE!")
+            print("[-] " + str(ip).ljust(15), "-> ", "LOGON_FAILURE!")
         elif "OBJECT_NAME_NOT_FOUND" in str(err):
-            print(str(ip).ljust(15), " -> ", "OBJECT_NAME_NOT_FOUND!")
+            print("[-] " + str(ip).ljust(15), "-> ", "OBJECT_NAME_NOT_FOUND!")
         elif "timed out" in str(err):
-            print(str(ip).ljust(15), " -> ", "Connect Host Time Out!")
+            print("[-] " + str(ip).ljust(15), "-> ", "Connection timeout!")
         elif "getaddrinfo failed" in str(err):
-            print(str(ip).ljust(15), " -> ", "Maybe Ipaddr Wrong")
+            print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP address.")
         elif "0x709" in str(err):
-            print(str(ip).ljust(15), " -> ", "Send Done!")
+            print("[+] " + str(ip).ljust(15), "-> ", "Internet accessible !!!")
         else:
-            print(str(ip).ljust(15), " -> ", "Maybe False!")
+            print("[-] " + str(ip).ljust(15), "-> ", "Internet inaccessible.")
 
 if __name__ == '__main__':
     base_domain, res_token = "", ""
     parser = argparse.ArgumentParser(description="Win RPC test")
     parser.add_argument('--target', '-t', type=str, help='TargetIP')
     parser.add_argument('--file', '-f', type=str, help='TargetIpsFile')
+    parser.add_argument('--domain', '-d', action="store", type=str, help='Specify domain')
     parser.add_argument('--username', '-u', required=True, type=str, help='UserName')
-    parser.add_argument('--password', '-p', required=True, type=str,help='PassWord')
+    parser.add_argument('--password', '-p', action="store", type=str,help='PassWord')
+    parser.add_argument('--hashes', '-H', action="store", default=None ,metavar = "LMHASH:NTHASH", help='NTLM hashes, format is LMHASH:NTHASH')
     parser.add_argument('--output', '-o', type=str, help='output')
     # todo: 将结果保存到文件。
     # parser.add_argument('--detail', '-v', default="1", type=str, help='detail output')
-    # todo： 增加 nthash 和 lmhash 认证方式。
     args = parser.parse_args()
 
     if (args.target != None) | (args.file != None):
@@ -134,15 +133,13 @@ if __name__ == '__main__':
             exit("get DNSlog domain fail！")
 
     if args.target:
-        Dce_ip(args.target, args.username, args.password)
+        Dce_ip(args.target, args.domain , args.username, args.password, args.hashes)
         GetDNSlogRes(base_domain, res_token)
 
     elif args.file:
-        Dce_IpsFile(args.file, args.username, args.password)
+        Dce_IpsFile(args.file, args.domain, args.username, args.password, args.hashes)
         GetDNSlogRes(base_domain, res_token)
 
     else:
         print("Missing Parameters！\neg: python WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
          python WinRPCtest.py -f ips.txt -u administrator -p admin123")
-
-    # Dce_ip("192.168.119.135", "administrator", "admin123")
