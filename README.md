@@ -25,9 +25,7 @@
 
 ```
 1. 规范hashes的格式
-[lmhash]：
-:[nthash]
-[lmhash]:[nthash]
+[LMHASH]: or :[NTHASH] or [LMHASH]:[NTHASH]
 
 2. 增加 -o 参数，将成功的IP保存到文件中。
 ```
@@ -43,7 +41,8 @@ Add pass the hashes & domain arguments。感谢@[XiaoliChan](https://github.com/
 ### Usage
 
 ```
-WinRpcTest.py [-h] [--target/-t TARGET] [--file/-f FILE] -u USERNAME -p PASSWORD
+WinRpcTest.py [-h] [--target/t TARGET] [--file/-f FILE] [--domain/-d DOMAIN] 
+	--username/-u USERNAME [--password/-p PASSWORD] [--hashes/-H LMHASH:NTHASH] [-o OUTPUT]
 ```
 
 单个IP
@@ -77,7 +76,7 @@ python3 WinRpcTest.py -f test.lst -u administrator -p admin@123 -o a.txt
 
 
 
-## 参考接
+## 参考链接
 
 https://github.com/Rvn0xsy/rvn0xsy.github.io/blob/0c31bb921398e9e2b79fb18ab8c4f6a53001ce50/content/post/2022/2022-03-04-windows-rpc.md
 
