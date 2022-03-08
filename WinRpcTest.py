@@ -18,8 +18,6 @@ import json
 TS = ('8a885d04-1ceb-11c9-9fe8-08002b104860', '2.0')
 IFACE_UUID = rprn.MSRPC_UUID_RPRN
 
-username = ''
-password = ''
 
 def banner():
     pass
@@ -42,7 +40,7 @@ def GetDNSlogRes(base_domain,res_token):
 
         if res_json:
             ips = []
-            print("\nsuccessful ips: \n")
+            print("\n[+] successful ips: \n")
             for i in res_json:
                 ip_temp = str(res_json[i]['subdomain']).split(".")
                 del ip_temp[-6:]
@@ -50,9 +48,12 @@ def GetDNSlogRes(base_domain,res_token):
                 if ip not in ips:
                     ips.append(ip)
             [print(x) for x in ips]
+            if args.output:
+                with open(args.output,"w") as op:
+                    op.write("\n".join(ips))
             print()
         else:
-            print("\nIps all False!\n")
+            print("\n[x] Ips all False!\n")
     except:
         pass
 
@@ -60,25 +61,37 @@ def GetDNSlogRes(base_domain,res_token):
 def Dce_IpsFile(filename, domain, username, password, hashes):
     ips = open(filename,"r").readlines()
     for ip in ips:
-        ip = ip.strip()
-        Dce_ip(ip, domain, username, password, hashes)
+        Dce_ip(ip.strip(), domain, username, password, hashes)
 
 def Dce_ip(ip, domain ,username, password, hashes):
-    global base_domain,res_cookie
+    global base_domain
 
     if domain is None:
         domain = ''
 
+    lmhash = ''
+    nthash = ''
+    if (password is None) & (hashes is None):
+        exit("[x] Missing password OR hashes!")
+
     if hashes is not None:
-        lmhash, nthash = hashes.split(':')
-    else:
-        lmhash = ''
-        nthash = ''
+        try:
+            lmhash, nthash = hashes.split(':')
+            if (len(lmhash) != 32) & (len(nthash) != 32):
+                exit("[x] Hashes Length Error!")
+            elif (lmhash is None) | (len(nthash) == 32):
+                pass
+            elif (nthash is None) | (len(lmhash) == 32):
+                pass
+            else:
+                exit("[x] Hashes Type Error!")
+
+        except:
+            exit("[x] Hashes Type Error!")
+
 
     ncacn_np = rf'ncacn_np:{ip}[\pipe\spoolss]'
     rpctransport = transport.DCERPCTransportFactory(ncacn_np)
-    username = username
-    password = password
 
     try:
         rpctransport.set_credentials(username, password, domain, lmhash, nthash)
@@ -102,13 +115,13 @@ def Dce_ip(ip, domain ,username, password, hashes):
         elif "OBJECT_NAME_NOT_FOUND" in str(err):
             print("[-] " + str(ip).ljust(15), "-> ", "OBJECT_NAME_NOT_FOUND!")
         elif "timed out" in str(err):
-            print("[-] " + str(ip).ljust(15), "-> ", "Connection timeout!")
+            print("[-] " + str(ip).ljust(15), "-> ", "Connection Timeout!")
         elif "getaddrinfo failed" in str(err):
-            print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP address!")
+            print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP Address!")
         elif "0x709" in str(err):
-            print("[+] " + str(ip).ljust(15), "-> ", "Internet accessible !!!")
+            print("[+] " + str(ip).ljust(15), "-> ", "Internet Accessible !!!")
         else:
-            print("[-] " + str(ip).ljust(15), "-> ", "Internet inaccessible.")
+            print("[-] " + str(ip).ljust(15), "-> ", "Internet Inaccessible.")
 
 if __name__ == '__main__':
     base_domain, res_token = "", ""
@@ -120,15 +133,14 @@ if __name__ == '__main__':
     parser.add_argument('--password', '-p', action="store", type=str,help='PassWord')
     parser.add_argument('--hashes', '-H', action="store", default=None ,metavar = "LMHASH:NTHASH", help='NTLM hashes, format is LMHASH:NTHASH')
     parser.add_argument('--output', '-o', type=str, help='output')
-    # todo: 将结果保存到文件。
-    # parser.add_argument('--detail', '-v', default="1", type=str, help='detail output')
+
     args = parser.parse_args()
 
     if (args.target != None) | (args.file != None):
         try:
             base_domain, res_token = GetDNSlog()
         except:
-            exit("get DNSlog domain fail！")
+            exit("[x] get DNSlog domain fail！")
 
     if args.target:
         Dce_ip(args.target, args.domain , args.username, args.password, args.hashes)
@@ -139,6 +151,7 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("Missing Parameters！\neg: python3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123\n \
-         python3 WinRPCtest.py -f ips.txt -u administrator -p admin123\n \
-         python3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
+        print("[x] Missing Parameters！")
+        print("eg: \n\tpython3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123")
+        print("\tpython3 WinRPCtest.py -f ips.txt -u administrator -p admin123")
+        print("\tpython3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
