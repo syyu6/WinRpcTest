@@ -1,0 +1,2 @@
+impacket==0.9.24
+requests==2.27.1

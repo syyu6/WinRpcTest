@@ -14,7 +14,6 @@ import argparse
 import requests
 import json
 
-
 TS = ('8a885d04-1ceb-11c9-9fe8-08002b104860', '2.0')
 IFACE_UUID = rprn.MSRPC_UUID_RPRN
 
@@ -22,20 +21,21 @@ IFACE_UUID = rprn.MSRPC_UUID_RPRN
 def banner():
     pass
 
+
 def GetDNSlog():
-    base_res = requests.post("https://dig.pm/new_gen",data="domain=dns.1433.eu.org.",timeout=5).text
+    base_res = requests.post("https://dig.pm/new_gen", data="domain=dns.1433.eu.org.", timeout=5).text
     base_domain, res_token = json.loads(base_res)['domain'], json.loads(base_res)['token']
     print("[+] GetDNSlogInfo:", base_domain, res_token, '\n')
     return base_domain, res_token
 
 
-def GetDNSlogRes(base_domain,res_token):
+def GetDNSlogRes(base_domain, res_token):
     datas = {
         'domain': base_domain,
         'token': res_token
     }
     try:
-        res = requests.post("https://dig.pm/get_results", data=datas,timeout=5)
+        res = requests.post("https://dig.pm/get_results", data=datas, timeout=5)
         res_json = json.loads(res.text)
 
         if res_json:
@@ -49,7 +49,7 @@ def GetDNSlogRes(base_domain,res_token):
                     ips.append(ip)
             [print(x) for x in ips]
             if args.output:
-                with open(args.output,"w") as op:
+                with open(args.output, "w") as op:
                     op.write("\n".join(ips))
             print()
         else:
@@ -59,11 +59,12 @@ def GetDNSlogRes(base_domain,res_token):
 
 
 def Dce_IpsFile(filename, domain, username, password, hashes):
-    ips = open(filename,"r").readlines()
+    ips = open(filename, "r").readlines()
     for ip in ips:
         Dce_ip(ip.strip(), domain, username, password, hashes)
 
-def Dce_ip(ip, domain ,username, password, hashes):
+
+def Dce_ip(ip, domain, username, password, hashes):
     global base_domain
 
     if domain is None:
@@ -88,7 +89,6 @@ def Dce_ip(ip, domain ,username, password, hashes):
 
         except:
             exit("[x] Hashes Type Error!")
-
 
     ncacn_np = rf'ncacn_np:{ip}[\pipe\spoolss]'
     rpctransport = transport.DCERPCTransportFactory(ncacn_np)
@@ -123,6 +123,7 @@ def Dce_ip(ip, domain ,username, password, hashes):
         else:
             print("[-] " + str(ip).ljust(15), "-> ", "Internet Inaccessible.")
 
+
 if __name__ == '__main__':
     base_domain, res_token = "", ""
     parser = argparse.ArgumentParser(description="Win RPC test")
@@ -130,8 +131,9 @@ if __name__ == '__main__':
     parser.add_argument('--file', '-f', type=str, help='TargetIpsFile')
     parser.add_argument('--domain', '-d', action="store", type=str, help='Specify domain')
     parser.add_argument('--username', '-u', required=True, type=str, help='UserName')
-    parser.add_argument('--password', '-p', action="store", type=str,help='PassWord')
-    parser.add_argument('--hashes', '-H', action="store", default=None ,metavar = "LMHASH:NTHASH", help='NTLM hashes, format is LMHASH:NTHASH')
+    parser.add_argument('--password', '-p', action="store", type=str, help='PassWord')
+    parser.add_argument('--hashes', '-H', action="store", default=None, metavar="LMHASH:NTHASH",
+                        help='NTLM hashes, format is LMHASH:NTHASH')
     parser.add_argument('--output', '-o', type=str, help='output')
 
     args = parser.parse_args()
@@ -143,7 +145,7 @@ if __name__ == '__main__':
             exit("[x] get DNSlog domain fail！")
 
     if args.target:
-        Dce_ip(args.target, args.domain , args.username, args.password, args.hashes)
+        Dce_ip(args.target, args.domain, args.username, args.password, args.hashes)
         GetDNSlogRes(base_domain, res_token)
 
     elif args.file:
@@ -154,4 +156,5 @@ if __name__ == '__main__':
         print("[x] Missing Parameters！")
         print("eg: \n\tpython3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123")
         print("\tpython3 WinRPCtest.py -f ips.txt -u administrator -p admin123")
-        print("\tpython3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
+        print(
+            "\tpython3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
