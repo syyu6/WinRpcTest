@@ -19,7 +19,13 @@ IFACE_UUID = rprn.MSRPC_UUID_RPRN
 
 
 def banner():
-    pass
+    print(""" _       ___       ____
+| |     / (_)___  / __ \____  _____
+| | /| / / / __ \/ /_/ / __ \/ ___/
+| |/ |/ / / / / / _, _/ /_/ / /__
+|__/|__/_/_/ /_/_/ |_/ .___/\___/
+                    /_/                   
+        """)
 
 
 def GetDNSlog():
@@ -53,7 +59,7 @@ def GetDNSlogRes(base_domain, res_token):
                     op.write("\n".join(ips))
             print()
         else:
-            print("\n[x] Ips all False!\n")
+            print("\n[x] IPS All FAILURE!\n")
     except:
         pass
 
@@ -119,18 +125,19 @@ def Dce_ip(ip, domain, username, password, hashes):
         elif "getaddrinfo failed" in str(err):
             print("[-] " + str(ip).ljust(15), "-> ", "Wrong IP Address!")
         elif "0x709" in str(err):
-            print("[+] " + str(ip).ljust(15), "-> ", "Internet Accessible !!!")
+            print("[+] " + str(ip).ljust(15), "-> ", "Send Done !!!")
         else:
-            print("[-] " + str(ip).ljust(15), "-> ", "Internet Inaccessible.")
+            print("[-] " + str(ip).ljust(15), "-> ", "Maybe Flase!")
 
 
 if __name__ == '__main__':
+    banner()
     base_domain, res_token = "", ""
-    parser = argparse.ArgumentParser(description="Win RPC test")
+    parser = argparse.ArgumentParser(description="WinRpcTest - Batch Detection Windows Machines Network.")
     parser.add_argument('--target', '-t', type=str, help='TargetIP')
     parser.add_argument('--file', '-f', type=str, help='TargetIpsFile')
     parser.add_argument('--domain', '-d', action="store", type=str, help='Specify domain')
-    parser.add_argument('--username', '-u', required=True, type=str, help='UserName')
+    parser.add_argument('--username', '-u', type=str, help='UserName')
     parser.add_argument('--password', '-p', action="store", type=str, help='PassWord')
     parser.add_argument('--hashes', '-H', action="store", default=None, metavar="LMHASH:NTHASH",
                         help='NTLM hashes, format is LMHASH:NTHASH')
@@ -153,8 +160,9 @@ if __name__ == '__main__':
         GetDNSlogRes(base_domain, res_token)
 
     else:
-        print("[x] Missing Parameters！")
-        print("eg: \n\tpython3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123")
-        print("\tpython3 WinRPCtest.py -f ips.txt -u administrator -p admin123")
-        print(
-            "\tpython3 WinRpcTest.py -f test.lst -d test.com -u administrator -H e91d2eafde47de62c6c49a012b3a6af1:e91d2eafde47de62c6c49a012b3a6af1")
+        # print("[x] Missing Parameters！")
+        print("Usage:\n  WinRpcTest.py [-h] [--target/t TARGET] [--file/-f FILE] [--domain/-d DOMAIN] \
+	\n\t --username/-u USERNAME [--password/-p PASSWORD] [--hashes/-H LMHASH:NTHASH] [-o OUTPUT]")
+        print("eg: \n  python3 WinRPCtest.py -t 192.168.101.10 -u administrator -p admin123")
+        print("  python3 WinRPCtest.py -f ips.txt -u administrator -p admin123")
+        print("  python3 WinRpcTest.py -f test.lst -d test.com -u administrator -H [LMHASH]:[NTHASH]")
